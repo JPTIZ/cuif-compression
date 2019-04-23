@@ -16,11 +16,6 @@ sourceSets {
     }
 }
 
-task run(type:JavaExec) {
-    main = mainClass
-    classpath = sourceSets.main.runtimeClasspath
-}
-
 apply plugin:'application'
 mainClassName = "BmpToCuif"
 
