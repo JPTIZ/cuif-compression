@@ -6,14 +6,14 @@
  * Exemplo de uso: java cuif2bmp lena.cuif lenadecodificada.bmp
  *
  */
+package cuif;
 
-public class cuif2bmp {
 
+public class CuifToBmp {
     public static void main(String[] args) {
-
         // Analisa argumentos
-        if (args.length!=2) {
-            System.out.println("Número errado de argumentos:" + args.length);
+        if (args.length != 2) {
+            System.out.println("Número errado de argumentos: " + args.length);
             System.out.println("Sintaxe: java bmp2cuif  <arquivo CUIF entrada> <arquivo BMP saida>");
             return;
         }
@@ -25,9 +25,7 @@ public class cuif2bmp {
             // Gera imagem Bitmap a partir de Cuif1
             Bitmap bmpimg = new Bitmap();
             bmpimg.cuiftoBitmap(inputFile);
-
             bmpimg.save(outputFile);
-
         } catch (Exception ioex) {
             System.out.println(ioex);
         }

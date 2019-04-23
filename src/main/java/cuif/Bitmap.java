@@ -1,3 +1,5 @@
+package cuif;
+
 import java.io.*;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -37,7 +39,7 @@ public class Bitmap {
     }
 
     // Construtor para gerar objeto Bitmap a partir do arquivo bitmap de nome "filename"
-    Bitmap(String filename) throws Exception{
+    Bitmap(String filename) throws Exception {
 
         // Abre o arquivo BMP
         Path path = Paths.get(filename);
@@ -89,8 +91,8 @@ public class Bitmap {
 
         byte r, g, b;
         int index = offsetToStartImage;
-        for (int i = 0; i < height; i++){
-            for (int j = 0; j < width; j++){
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
                 b = (byte)(bitmapfile[index++]&0xff);
                 g = (byte)(bitmapfile[index++]&0xff);
                 r = (byte)(bitmapfile[index++]&0xff);
@@ -225,20 +227,20 @@ public class Bitmap {
         raster = new int[height][width][3];
 
         // Leitura do raster (bitmap-reticulado) do arquivo CUIF.1
-        for (int i = 0; i < height; i++){
-            for (int j = 0; j < width; j++){
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
                 r = cuiffile[index++]&0xff;
                 raster[i][j][0] = r;
             }
         }
-        for (int i = 0; i < height; i++){
-            for (int j = 0; j < width; j++){
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
                 g = cuiffile[index++]&0xff;
                 raster[i][j][1] = g;
             }
         }
-        for (int i = 0; i < height; i++){
-            for (int j = 0; j < width; j++){
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
                 b = cuiffile[index++]&0xff;
                 raster[i][j][2] = b;
             }
@@ -246,8 +248,8 @@ public class Bitmap {
 
         // Escrita no array de bytes (bitmapfile) que representa em memória o arquivo Bitmap
         int k = offsetToStartImage;
-        for (int i = height-1; i >= 0; i--){
-            for (int j = width-1; j >= 0; j--){
+        for (int i = height-1; i >= 0; i--) {
+            for (int j = width-1; j >= 0; j--) {
                 bitmapfile[k++] = (byte)raster[i][j][0]; // escreve componente R
                 bitmapfile[k++] = (byte)raster[i][j][1]; // escreve componente G
                 bitmapfile[k++] = (byte)raster[i][j][2]; // escreve componente B
@@ -265,7 +267,7 @@ public class Bitmap {
     }
 
     // Método para salvar o arquivo em "filename"
-    public void save(String filename){
+    public void save(String filename) {
         try {
             FileOutputStream fileOuputStream = new FileOutputStream(filename);
             fileOuputStream.write(bitmapfile);

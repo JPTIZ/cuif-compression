@@ -1,3 +1,5 @@
+package cuif;
+
 import java.io.*;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -18,7 +20,7 @@ public class Cuif {
     // raster[i][j][2] é o componente B em (i,j)
     byte[] cuiffile; // � o array de bytes com dados do arquivo em mem�ria
 
-    Cuif(String filename) throws IOException{
+    Cuif(String filename) throws IOException {
         readFile(filename);
     }
 
@@ -60,22 +62,22 @@ public class Cuif {
     private void readRGB(int[][][] rasterbmp, int offset) {
         int r, g, b;
         raster = new int[height][width][3];
-        for (int i = 0; i < height; i++){
-            for (int j = 0; j < width; j++){
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
                 r = rasterbmp[i][j][0];
                 cuiffile[offset++] = (byte)(r&0xff);
                 raster[i][j][0] = r;
             }
         }
-        for (int i = 0; i < height; i++){
-            for (int j = 0; j < width; j++){
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
                 g = rasterbmp[i][j][1];
                 cuiffile[offset++] = (byte)(g&0xff);
                 raster[i][j][1] = g;
             }
         }
-        for (int i = 0; i < height; i++){
-            for (int j = 0; j < width; j++){
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
                 b = rasterbmp[i][j][2];
                 cuiffile[offset++] = (byte)(b&0xff);
                 raster[i][j][2] = b;
@@ -84,7 +86,7 @@ public class Cuif {
     }
 
     // Leitura de um arquivo Cuif1
-    public void readFile(String filename) throws IOException{
+    public void readFile(String filename) throws IOException {
 
         // Abre o arquivo BMP
         Path path = Paths.get(filename);
@@ -121,20 +123,20 @@ public class Cuif {
     private void readPixels(int index)throws IOException {
         int r, g, b;
 
-        for (int i = 0; i < height; i++){
-            for (int j = 0; j < width; j++){
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
                 r = cuiffile[index++]&0xff;
                 raster[i][j][0] = r;
             }
         }
-        for (int i = 0; i < height; i++){
-            for (int j = 0; j < width; j++){
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
                 g = cuiffile[index++]&0xff;
                 raster[i][j][1] = g;
             }
         }
-        for (int i = 0; i < height; i++){
-            for (int j = 0; j < width; j++){
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
                 b = cuiffile[index++]&0xff;
                 raster[i][j][2] = b;
             }
@@ -142,7 +144,7 @@ public class Cuif {
     }
     // Salva a imagem
 
-    public void save(String filename){
+    public void save(String filename) {
         try {
             FileOutputStream fileOuputStream = new FileOutputStream(filename);
             fileOuputStream.write(cuiffile);

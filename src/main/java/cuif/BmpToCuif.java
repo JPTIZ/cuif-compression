@@ -6,27 +6,35 @@
  * Exemplo de uso: java bmp2cuif --version 1 lena.bmp lena.cuif
  *
  */
+package cuif;
+
 
 public class BmpToCuif {
-
     public static void main(String[] args) {
         // Analisa argumentos
-        if (args.length!=4) {
-            System.out.println("Número errado de argumentos:" + args.length);
+        if (args.length != 1 && args.length != 3) {
+            System.out.println("Número errado de argumentos: " + args.length);
             System.out.println(
-                "Sintaxe: java bmp2cuif --version <version> <arquivo entrada> <arquivo saida>"
+                "Uso: \n" +
+                "    java bmp2cuif --version <version>\n" +
+                "    <arquivo entrada> <arquivo saida>"
             );
             return;
         }
+
         String arg1 = args[0].toLowerCase().trim();
-        if (!arg1.equals("-v")) {
+
+        if (!(arg1.equals("-v") || arg1.equals("--version"))) {
             System.out.println("Argumento desconhecido: " + args[0]);
-            System.out.println("Sintaxe: java bmp2cuif -v <version> <arquivo entrada> <arquivo saida>");
+            System.out.println(
+                "Sintaxe: java bmp2cuif -v <version> <arquivo entrada> <arquivo saida>"
+            );
             return;
         }
+
         try {
             int version = Integer.parseInt(args[1]);
-            if (version !=1) {
+            if (version != 1) {
                 System.out.println("Versão não suportada");
                 return;
             }
@@ -46,7 +54,7 @@ public class BmpToCuif {
             // número de membros da equipe e a matrícula dos membros
             int numero_de_estudantes = 1;
             int[] id_estudante = {16208812};
-            Cuif filecuif = new Cuif(bmpimg,1, numero_de_estudantes,id_estudante);
+            Cuif filecuif = new Cuif(bmpimg, 1, numero_de_estudantes, id_estudante);
             filecuif.save(outputFile);
 
         } catch (Exception ioex) {
