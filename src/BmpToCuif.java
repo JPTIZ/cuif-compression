@@ -7,14 +7,15 @@
  *
  */
 
-public class bmp2cuif {
+public class BmpToCuif {
 
     public static void main(String[] args) {
-
         // Analisa argumentos
         if (args.length!=4) {
             System.out.println("Número errado de argumentos:" + args.length);
-            System.out.println("Sintaxe: java bmp2cuif --version <version> <arquivo entrada> <arquivo saida>");
+            System.out.println(
+                "Sintaxe: java bmp2cuif --version <version> <arquivo entrada> <arquivo saida>"
+            );
             return;
         }
         String arg1 = args[0].toLowerCase().trim();
@@ -40,8 +41,9 @@ public class bmp2cuif {
             // Leitura de arquivo bmp
             Bitmap bmpimg = new Bitmap(inputFile);
 
-            // Criação de do arquivo Cuif1 a partir da leutura do arquivo lena.bmp
-            // modifique numero_estudantes e id_estudante indicando o número de membros da equipe e a matrícula dos membros
+            // Criação de do arquivo Cuif1 a partir da leutura do arquivo
+            // lena.bmp modifique numero_estudantes e id_estudante indicando o
+            // número de membros da equipe e a matrícula dos membros
             int numero_de_estudantes = 1;
             int[] id_estudante = {16208812};
             Cuif filecuif = new Cuif(bmpimg,1, numero_de_estudantes,id_estudante);

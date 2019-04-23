@@ -1,0 +1,29 @@
+plugins {
+    id 'java'
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src']
+        }
+    }
+
+    test {
+        java {
+            srcDirs = ['src']
+        }
+    }
+}
+
+task run(type:JavaExec) {
+    main = mainClass
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+apply plugin:'application'
+mainClassName = "BmpToCuif"
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+version = '0.1.0'

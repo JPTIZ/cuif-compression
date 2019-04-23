@@ -103,7 +103,6 @@ public class Bitmap {
 
     // Converte um arquivo Cuif para Bitmap.
     public void cuiftoBitmap(String filename) throws IOException {
-
         // abre arquivo cuif e lê bytes
         Path path = Paths.get(filename);
         byte[] cuiffile = Files.readAllBytes(path);
