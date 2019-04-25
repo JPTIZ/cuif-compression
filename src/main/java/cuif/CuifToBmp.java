@@ -24,7 +24,7 @@ public class CuifToBmp {
         try {
             // Gera imagem Bitmap a partir de Cuif1
             Bitmap bmpimg = new Bitmap();
-            bmpimg.cuiftoBitmap(inputFile);
+            bmpimg.fromCuif(inputFile);
             bmpimg.save(outputFile);
         } catch (Exception ioex) {
             System.out.println(ioex);

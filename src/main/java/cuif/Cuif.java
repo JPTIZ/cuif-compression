@@ -25,9 +25,9 @@ public class Cuif {
     }
 
     // Construtor Cuif1 a partir de uma imagem Bitmap
-    Cuif(Bitmap bmp, int version, int nstudents, int[] ids) throws Exception {
-        numberOfStudents = nstudents;
-        identifier = ids;
+    Cuif(Bitmap bmp, int version, int[] idStudents) throws Exception {
+        numberOfStudents = idStudents.length;
+        identifier = idStudents;
         width = bmp.width;
         height = bmp.height;
 
@@ -57,29 +57,33 @@ public class Cuif {
         readRGB(bmp.raster, offset);
     }
 
-    // Leitura do raster do arquivo bitmap para salvar no atributo raster
-    // Durante a leitura, o método também salva no array de bytes cuiffile que representa os dados do arquivo cuif
+    /**
+     * Leitura do raster do arquivo bitmap para salvar no atributo raster
+     * Durante a leitura, o método também salva no array de bytes cuiffile que
+     * representa os dados do arquivo cuif
+     */
     private void readRGB(int[][][] rasterbmp, int offset) {
-        int r, g, b;
         raster = new int[height][width][3];
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                r = rasterbmp[i][j][0];
-                cuiffile[offset++] = (byte)(r&0xff);
+        for (var i = 0; i < height; i++) {
+            for (var j = 0; j < width; j++) {
+                var r = rasterbmp[i][j][0];
+                cuiffile[offset++] = (byte)(r & 0xff);
                 raster[i][j][0] = r;
             }
         }
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                g = rasterbmp[i][j][1];
-                cuiffile[offset++] = (byte)(g&0xff);
+        
+        for (var i = 0; i < height; i++) {
+            for (var j = 0; j < width; j++) {
+                var g = rasterbmp[i][j][1];
+                cuiffile[offset++] = (byte)(g & 0xff);
                 raster[i][j][1] = g;
             }
         }
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                b = rasterbmp[i][j][2];
-                cuiffile[offset++] = (byte)(b&0xff);
+
+        for (var i = 0; i < height; i++) {
+            for (var j = 0; j < width; j++) {
+                var b = rasterbmp[i][j][2];
+                cuiffile[offset++] = (byte)(b & 0xff);
                 raster[i][j][2] = b;
             }
         }
@@ -87,69 +91,75 @@ public class Cuif {
 
     // Leitura de um arquivo Cuif1
     public void readFile(String filename) throws IOException {
-
         // Abre o arquivo BMP
-        Path path = Paths.get(filename);
+        var path = Paths.get(filename);
 
         // Leitura dos bytes do arquivo
         cuiffile = Files.readAllBytes(path);
 
-        signature = (cuiffile[0]&0xff) | (cuiffile[1]&0xff) << 8;
-        if (signature != 5431)
+        signature = (cuiffile[0] & 0xff) | (cuiffile[1] & 0xff) << 8;
+        if (signature != 5431) {
             throw new IOException("File format error");
+        }
 
-        version  = cuiffile[2]&0xff;
-        numberOfStudents = cuiffile[3]&0xff;
-        width = (cuiffile[4]&0xff)|(cuiffile[5]&0xff) << 8|(cuiffile[6]&0xff) << 16|
-            (cuiffile[7]&0xff) << 24;
-        height = (cuiffile[8]&0xff)|(cuiffile[9]&0xff) << 8|(cuiffile[10]&0xff) << 16|
-            (cuiffile[11]&0xff) << 24;
+        version  = cuiffile[2] & 0xff;
+        numberOfStudents = cuiffile[3] & 0xff;
+        width = (cuiffile[4] & 0xff) | 
+                (cuiffile[5] & 0xff) << 8 |
+                (cuiffile[6] & 0xff) << 16 |
+                (cuiffile[7] & 0xff) << 24;
+        height = (cuiffile[8] & 0xff) |
+                 (cuiffile[9] & 0xff) << 8 |
+                 (cuiffile[10] & 0xff) << 16 |
+                 (cuiffile[11] & 0xff) << 24;
+
         identifier = new int[numberOfStudents];
-        int index = 12;
-        for (int i = 0;i < numberOfStudents;i++) {
-            identifier[i] = (cuiffile[index++]&0xff)|(cuiffile[index++]&0xff) << 8|(cuiffile[index++]&0xff) << 16|
-                (cuiffile[index++]&0xff) << 24;
+
+        var index = 12;
+        for (var i = 0; i < numberOfStudents; i++) {
+            identifier[i] =
+                (cuiffile[index++] & 0xff) |
+                (cuiffile[index++] & 0xff) << 8 |
+                (cuiffile[index++] & 0xff) << 16 |
+                (cuiffile[index++] & 0xff) << 24;
         }
 
         raster = new int[height][width][3];
 
-        if (version == 1)
+        if (version == 1) {
             readPixels(index);
-        else
+        } else {
             throw new IOException("Unsupported version");
+        }
     }
 
     // Leitura dos pixels do arquivo cuif1
-    private void readPixels(int index)throws IOException {
-        int r, g, b;
-
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                r = cuiffile[index++]&0xff;
-                raster[i][j][0] = r;
+    private void readPixels(int index) throws IOException {
+        for (var i = 0; i < height; i++) {
+            for (var j = 0; j < width; j++) {
+                raster[i][j][0] = cuiffile[index++] & 0xff;;
             }
         }
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                g = cuiffile[index++]&0xff;
-                raster[i][j][1] = g;
+        for (var i = 0; i < height; i++) {
+            for (var j = 0; j < width; j++) {
+                raster[i][j][1] = cuiffile[index++] & 0xff;
             }
         }
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                b = cuiffile[index++]&0xff;
-                raster[i][j][2] = b;
+        for (var i = 0; i < height; i++) {
+            for (var j = 0; j < width; j++) {
+                raster[i][j][2] = cuiffile[index++] & 0xff;
             }
         }
     }
-    // Salva a imagem
 
+    // Salva a imagem
     public void save(String filename) {
         try {
-            FileOutputStream fileOuputStream = new FileOutputStream(filename);
+            var fileOuputStream = new FileOutputStream(filename);
             fileOuputStream.write(cuiffile);
             fileOuputStream.close();
         } catch (IOException ioex) {
+            System.err.println("Failed to save CUIF Image: " + ioex.getMessage());
         }
     }
 }

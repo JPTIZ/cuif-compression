@@ -32,7 +32,7 @@ public class Bitmap {
     // raster[i][j][2] é o componente B em (i,j)
 
     // é o array de bytes com dados do arquivo BitMap em memória, que serão salvo
-    byte[] bitmapfile;
+    private byte[] bitmapfile;
 
     Bitmap() {
         width = height = 0;
@@ -40,7 +40,6 @@ public class Bitmap {
 
     // Construtor para gerar objeto Bitmap a partir do arquivo bitmap de nome "filename"
     Bitmap(String filename) throws Exception {
-
         // Abre o arquivo BMP
         Path path = Paths.get(filename);
 
@@ -48,15 +47,21 @@ public class Bitmap {
         byte[] bitmapfile = Files.readAllBytes(path);
 
         // Leitura dos campos do cabeçalho BMP
-        int signature = (bitmapfile[0]&0xff) | (bitmapfile[1]&0xff) << 8;
+        int signature = (bitmapfile[0] & 0xff) | (bitmapfile[1] & 0xff) << 8;
         if (signature != 0x4D42) {
             throw new IOException("File format error :" + Integer.toHexString(signature));
         }
 
-        sizeOfBitmapFile = (bitmapfile[2]&0xff)|(bitmapfile[3]&0xff) << 8|
-            (bitmapfile[4]&0xff) << 16| (bitmapfile[5]&0xff) << 24;
-        reserved = (bitmapfile[6]&0xff)|(bitmapfile[7]&0xff) << 8|(bitmapfile[8]&0xff) << 16|
-            (bitmapfile[9]&0xff) << 24;
+        sizeOfBitmapFile =
+            (bitmapfile[2] & 0xff) |
+            (bitmapfile[3] & 0xff) << 8 |
+            (bitmapfile[4] & 0xff) << 16 |
+            (bitmapfile[5] & 0xff) << 24;
+        reserved =
+            (bitmapfile[6] & 0xff) |
+            (bitmapfile[7] & 0xff) << 8 |
+            (bitmapfile[8] & 0xff) << 16 |
+            (bitmapfile[9] & 0xff) << 24;
 
         if (reserved != 0) {
             throw new IOException("BMP Format Unsuported: Reserved");
@@ -89,49 +94,54 @@ public class Bitmap {
         // Criação do raster (reticulado)
         raster = new int[height][width][3];
 
-        byte r, g, b;
-        int index = offsetToStartImage;
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                b = (byte)(bitmapfile[index++]&0xff);
-                g = (byte)(bitmapfile[index++]&0xff);
-                r = (byte)(bitmapfile[index++]&0xff);
-                raster[i][j][0] = r;
-                raster[i][j][1] = g;
-                raster[i][j][2] = b;
+        var index = offsetToStartImage;
+        for (var i = 0; i < height; i++) {
+            for (var j = 0; j < width; j++) {
+                raster[i][j][0] = (byte)(bitmapfile[index++] & 0xff);
+                raster[i][j][1] = (byte)(bitmapfile[index++] & 0xff);
+                raster[i][j][2] = (byte)(bitmapfile[index++] & 0xff);
             }
         }
     }
 
     // Converte um arquivo Cuif para Bitmap.
-    public void cuiftoBitmap(String filename) throws IOException {
+    public void fromCuif(String filename) throws IOException {
         // abre arquivo cuif e lê bytes
-        Path path = Paths.get(filename);
-        byte[] cuiffile = Files.readAllBytes(path);
+        var path = Paths.get(filename);
+        var cuiffile = Files.readAllBytes(path);
 
-        int signature = (cuiffile[0]&0xff) | (cuiffile[1]&0xff) << 8;
-        if (signature != 5431)
+        var signature = (cuiffile[0]&0xff) | (cuiffile[1]&0xff) << 8;
+        if (signature != 5431) {
             throw new IOException("File format error");
+        }
 
-        int version = cuiffile[2];
+        var version = cuiffile[2];
 
-        int numberOfStudents = cuiffile[3]&0xff;
-        width = (cuiffile[4]&0xff)|(cuiffile[5]&0xff) << 8|(cuiffile[6]&0xff) << 16|
-            (cuiffile[7]&0xff) << 24;
-        height = (cuiffile[8]&0xff)|(cuiffile[9]&0xff) << 8|(cuiffile[10]&0xff) << 16|
-            (cuiffile[11]&0xff) << 24;
+        var numberOfStudents = cuiffile[3] & 0xff;
+        width =
+            (cuiffile[4] & 0xff) |
+            (cuiffile[5] & 0xff) << 8 |
+            (cuiffile[6] & 0xff) << 16 |
+            (cuiffile[7] & 0xff) << 24;
+        height =
+            (cuiffile[8] & 0xff) |
+            (cuiffile[9] & 0xff) << 8 |
+            (cuiffile[10] & 0xff) << 16 |
+            (cuiffile[11] & 0xff) << 24;
 
         System.out.print("Arquivo gerado pelo(s) estudante(s):");
-        int j = 12;
-        for (int i = 0;i < numberOfStudents;i++) {
-            int matricula = (cuiffile[j++]&0xff)|(cuiffile[j++]&0xff) << 8|(cuiffile[j++]&0xff) << 16|
-                (cuiffile[j++]&0xff) << 24;
+        var j = 12;
+        for (var i = 0;i < numberOfStudents;i++) {
+            var matricula = (cuiffile[j++] & 0xff) |
+                            (cuiffile[j++] & 0xff) << 8 |
+                            (cuiffile[j++] & 0xff) << 16 |
+                            (cuiffile[j++] & 0xff) << 24;
             System.out.print(matricula + ", ");
         }
 
         /* preparando array bitmapfile */
         sizeOfBitmapFile = 54 + height*width*3; // Cabeçalho de 54 bytes
-        int i = 0;
+        var i = 0;
         bitmapfile = new byte [sizeOfBitmapFile];
 
         // Assinatura
@@ -157,16 +167,16 @@ public class Bitmap {
         bitmapfile[i++] = bitmapfile[i++] = bitmapfile[i++] = 0;
 
         // Width
-        bitmapfile[i++] = (byte)(width&0x000000ff);
-        bitmapfile[i++] = (byte)((width&0x0000ff00) >> 8);
-        bitmapfile[i++] = (byte)((width&0x00ff0000) >> 16);
-        bitmapfile[i++] = (byte)((width&0xff000000) >> 24);
+        bitmapfile[i++] = (byte)(width & 0x000000ff);
+        bitmapfile[i++] = (byte)((width & 0x0000ff00) >> 8);
+        bitmapfile[i++] = (byte)((width & 0x00ff0000) >> 16);
+        bitmapfile[i++] = (byte)((width & 0xff000000) >> 24);
 
         // Height
-        bitmapfile[i++] = (byte)(height&0x000000ff);
-        bitmapfile[i++] = (byte)((height&0x0000ff00) >> 8);
-        bitmapfile[i++] = (byte)((height&0x00ff0000) >> 16);
-        bitmapfile[i++] = (byte)((height&0xff000000) >> 24);
+        bitmapfile[i++] = (byte)(height & 0x000000ff);
+        bitmapfile[i++] = (byte)((height & 0x0000ff00) >> 8);
+        bitmapfile[i++] = (byte)((height & 0x00ff0000) >> 16);
+        bitmapfile[i++] = (byte)((height & 0xff000000) >> 24);
 
         // number of planes
         numberOfPlanes = 1;
@@ -185,22 +195,22 @@ public class Bitmap {
 
         // Size of image
         sizeOfImageInBytes = width*height*3;
-        bitmapfile[i++] = (byte)(sizeOfImageInBytes&0x000000ff);
-        bitmapfile[i++] = (byte)((sizeOfImageInBytes&0x0000ff00) >> 8);
-        bitmapfile[i++] = (byte)((sizeOfImageInBytes&0x00ff0000) >> 16);
-        bitmapfile[i++] = (byte)((sizeOfImageInBytes&0xff000000) >> 24);
+        bitmapfile[i++] = (byte)(sizeOfImageInBytes & 0x000000ff);
+        bitmapfile[i++] = (byte)((sizeOfImageInBytes & 0x0000ff00) >> 8);
+        bitmapfile[i++] = (byte)((sizeOfImageInBytes & 0x00ff0000) >> 16);
+        bitmapfile[i++] = (byte)((sizeOfImageInBytes & 0xff000000) >> 24);
 
         // horizontal pixels per meter
-        bitmapfile[i++] = (byte)(sizeOfImageInBytes&0x000000ff);
-        bitmapfile[i++] = (byte)((sizeOfImageInBytes&0x0000ff00) >> 8);
-        bitmapfile[i++] = (byte)((sizeOfImageInBytes&0x00ff0000) >> 16);
-        bitmapfile[i++] = (byte)((sizeOfImageInBytes&0xff000000) >> 24);
+        bitmapfile[i++] = (byte)(sizeOfImageInBytes & 0x000000ff);
+        bitmapfile[i++] = (byte)((sizeOfImageInBytes & 0x0000ff00) >> 8);
+        bitmapfile[i++] = (byte)((sizeOfImageInBytes & 0x00ff0000) >> 16);
+        bitmapfile[i++] = (byte)((sizeOfImageInBytes & 0xff000000) >> 24);
 
         // vertical pixels per meter
-        bitmapfile[i++] = (byte)(sizeOfImageInBytes&0x000000ff);
-        bitmapfile[i++] = (byte)((sizeOfImageInBytes&0x0000ff00) >> 8);
-        bitmapfile[i++] = (byte)((sizeOfImageInBytes&0x00ff0000) >> 16);
-        bitmapfile[i++] = (byte)((sizeOfImageInBytes&0xff000000) >> 24);
+        bitmapfile[i++] = (byte)(sizeOfImageInBytes & 0x000000ff);
+        bitmapfile[i++] = (byte)((sizeOfImageInBytes & 0x0000ff00) >> 8);
+        bitmapfile[i++] = (byte)((sizeOfImageInBytes & 0x00ff0000) >> 16);
+        bitmapfile[i++] = (byte)((sizeOfImageInBytes & 0xff000000) >> 24);
 
         // number of colors
         numberOfColors = 0;
@@ -213,47 +223,43 @@ public class Bitmap {
         bitmapfile[i++] = bitmapfile[i++] = bitmapfile[i++] = 0;
 
         // gera raster
-        if (version == 1)
-            cuif1toRaster(cuiffile, numberOfStudents*4 + 12);
-        else
+        if (version == 1) {
+            cuif1toRaster(cuiffile, numberOfStudents * 4 + 12);
+        } else {
             throw new IOException("Versão não suportada");
-
+        }
     }
 
     // Método que lê os pixels do arquivo Cuif1 e gera raster, incluindo no array de bytes do arquivo
 
     private void cuif1toRaster(byte[] cuiffile, int index) {
-        int r, g, b;
         raster = new int[height][width][3];
 
         // Leitura do raster (bitmap-reticulado) do arquivo CUIF.1
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                r = cuiffile[index++]&0xff;
-                raster[i][j][0] = r;
+        for (var i = 0; i < height; i++) {
+            for (var j = 0; j < width; j++) {
+                raster[i][j][0] = cuiffile[index++] & 0xff;
             }
         }
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                g = cuiffile[index++]&0xff;
-                raster[i][j][1] = g;
+        for (var i = 0; i < height; i++) {
+            for (var j = 0; j < width; j++) {
+                raster[i][j][1] = cuiffile[index++] & 0xff;
             }
         }
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                b = cuiffile[index++]&0xff;
-                raster[i][j][2] = b;
+        for (var i = 0; i < height; i++) {
+            for (var j = 0; j < width; j++) {
+                raster[i][j][2] = cuiffile[index++] & 0xff;
             }
         }
 
-        // Escrita no array de bytes (bitmapfile) que representa em memória o arquivo Bitmap
-        int k = offsetToStartImage;
-        for (int i = height-1; i >= 0; i--) {
-            for (int j = width-1; j >= 0; j--) {
-                bitmapfile[k++] = (byte)raster[i][j][0]; // escreve componente R
-                bitmapfile[k++] = (byte)raster[i][j][1]; // escreve componente G
-                bitmapfile[k++] = (byte)raster[i][j][2]; // escreve componente B
-
+        // Escrita no array de bytes (bitmapfile) que representa em memória o
+        // arquivo Bitmap
+        var k = offsetToStartImage;
+        for (var i = height; i > 0; i--) {
+            for (var j = width; j > 0; j--) {
+                bitmapfile[k++] = (byte)raster[height - i][width - j][2]; // escreve componente R
+                bitmapfile[k++] = (byte)raster[height - i][width - j][1]; // escreve componente G
+                bitmapfile[k++] = (byte)raster[height - i][width - j][0]; // escreve componente B
             }
         }
     }
@@ -269,10 +275,11 @@ public class Bitmap {
     // Método para salvar o arquivo em "filename"
     public void save(String filename) {
         try {
-            FileOutputStream fileOuputStream = new FileOutputStream(filename);
+            var fileOuputStream = new FileOutputStream(filename);
             fileOuputStream.write(bitmapfile);
             fileOuputStream.close();
         } catch (IOException ioex) {
+            System.err.println("Failed to save CUIF Image: " + ioex.getMessage());
         }
     }
 }

@@ -12,19 +12,17 @@ package cuif;
 public class BmpToCuif {
     public static void main(String[] args) {
         // Analisa argumentos
-        if (args.length != 1 && args.length != 3) {
-            System.out.println("Número errado de argumentos: " + args.length);
+        if (args.length != 4) {
+            System.out.printf("Número errado de argumentos (%d)\n", args.length);
             System.out.println(
                 "Uso: \n" +
-                "    java bmp2cuif --version <version>\n" +
-                "    <arquivo entrada> <arquivo saida>"
+                "    java bmp2cuif --version|-v <version>" +
+                " <arquivo entrada> <arquivo saida>"
             );
             return;
         }
 
-        String arg1 = args[0].toLowerCase().trim();
-
-        if (!(arg1.equals("-v") || arg1.equals("--version"))) {
+        if (!(args[0].equals("-v") || args[0].equals("--version"))) {
             System.out.println("Argumento desconhecido: " + args[0]);
             System.out.println(
                 "Sintaxe: java bmp2cuif -v <version> <arquivo entrada> <arquivo saida>"
@@ -33,7 +31,7 @@ public class BmpToCuif {
         }
 
         try {
-            int version = Integer.parseInt(args[1]);
+            var version = Integer.parseInt(args[1]);
             if (version != 1) {
                 System.out.println("Versão não suportada");
                 return;
@@ -42,21 +40,19 @@ public class BmpToCuif {
             System.out.println("Versão não suportada");
         }
 
-        String inputFile = args[2];
-        String outputFile = args[3];
+        var inputFile = args[2];
+        var outputFile = args[3];
 
         try {
             // Leitura de arquivo bmp
-            Bitmap bmpimg = new Bitmap(inputFile);
+            var bmpimg = new Bitmap(inputFile);
 
             // Criação de do arquivo Cuif1 a partir da leutura do arquivo
             // lena.bmp modifique numero_estudantes e id_estudante indicando o
             // número de membros da equipe e a matrícula dos membros
-            int numero_de_estudantes = 1;
-            int[] id_estudante = {16208812};
-            Cuif filecuif = new Cuif(bmpimg, 1, numero_de_estudantes, id_estudante);
+            var idStudents = new int[] {14200743};
+            var filecuif = new Cuif(bmpimg, 1, idStudents);
             filecuif.save(outputFile);
-
         } catch (Exception ioex) {
             ioex.printStackTrace();
         }
