@@ -18,7 +18,7 @@ public class Cuif {
     // raster[i][j][0] é o componente R em (i,j)
     // raster[i][j][1] é o componente G em (i,j)
     // raster[i][j][2] é o componente B em (i,j)
-    byte[] cuiffile; // � o array de bytes com dados do arquivo em mem�ria
+    byte[] cuiffile; // é o array de bytes com dados do arquivo em memória
 
     Cuif(String filename) throws IOException {
         readFile(filename);
@@ -31,7 +31,7 @@ public class Cuif {
         width = bmp.width;
         height = bmp.height;
 
-        int offset = 0;
+        var offset = 0;
         cuiffile = new byte[width*height*3 + 12 + numberOfStudents*4];
         cuiffile[offset++] = 0x37; // assinatura 5321d = 1537h
         cuiffile[offset++] = 0x15;
@@ -48,7 +48,7 @@ public class Cuif {
         cuiffile[offset++] = (byte)((height&0x00ff0000) >> 16);
         cuiffile[offset++] = (byte)((height&0xff000000) >> 24);
 
-        for (int i = 0;i < numberOfStudents;i++) {
+        for (var i = 0;i < numberOfStudents;i++) {
             cuiffile[offset++] = (byte)(identifier[i]&0x000000ff);
             cuiffile[offset++] = (byte)((identifier[i]&0x0000ff00) >> 8);
             cuiffile[offset++] = (byte)((identifier[i]&0x00ff0000) >> 16);
@@ -64,6 +64,19 @@ public class Cuif {
      */
     private void readRGB(int[][][] rasterbmp, int offset) {
         raster = new int[height][width][3];
+
+        var numPixels = width * height;
+
+        readR(rasterbmp, offset);
+        readG(rasterbmp, offset + numPixels);
+        readB(rasterbmp, offset + numPixels * 2);
+    }
+    
+    /**
+     * O mesmo de `readRGB`, porém apenas lendo o canal R.
+     */
+    private void readR(int[][][] rasterbmp, int offset) {
+        raster = new int[height][width][3];
         for (var i = 0; i < height; i++) {
             for (var j = 0; j < width; j++) {
                 var r = rasterbmp[i][j][0];
@@ -71,7 +84,13 @@ public class Cuif {
                 raster[i][j][0] = r;
             }
         }
-        
+    }
+    
+    /**
+     * O mesmo de `readRGB`, porém apenas lendo o canal G.
+     */
+    private void readG(int[][][] rasterbmp, int offset) {
+        raster = new int[height][width][3];
         for (var i = 0; i < height; i++) {
             for (var j = 0; j < width; j++) {
                 var g = rasterbmp[i][j][1];
@@ -79,7 +98,13 @@ public class Cuif {
                 raster[i][j][1] = g;
             }
         }
+    }
 
+    /**
+     * O mesmo de `readRGB`, porém apenas lendo o canal B.
+     */
+    private void readB(int[][][] rasterbmp, int offset) {
+        raster = new int[height][width][3];
         for (var i = 0; i < height; i++) {
             for (var j = 0; j < width; j++) {
                 var b = rasterbmp[i][j][2];
